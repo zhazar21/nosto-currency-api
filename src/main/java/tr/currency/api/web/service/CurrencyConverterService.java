@@ -22,9 +22,9 @@ import java.util.Set;
 public class CurrencyConverterService {
 
     public static final String EUR = "EUR";
+
     private final Environment env;
 
-//    private RestTemplate restTemplate;
 
     @Bean
     public RestTemplate restTemplate() {
