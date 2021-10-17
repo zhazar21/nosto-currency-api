@@ -1,7 +1,7 @@
 package tr.currency.api.web.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
@@ -19,6 +19,7 @@ import java.util.Set;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class CurrencyConverterService {
 
     public static final String EUR = "EUR";
@@ -31,7 +32,6 @@ public class CurrencyConverterService {
         return new RestTemplate();
     }
 
-    @Cacheable("getCurrencies")
     public Map<String, Double> getCurrencies() throws CurrencyException {
         RestTemplate restTemplate =new RestTemplate();
         final HttpHeaders headers = new HttpHeaders();
@@ -48,31 +48,35 @@ public class CurrencyConverterService {
         return exchangeRatesApiModel.getRates();
     }
 
-    @Cacheable("getCurrenciesTypes")
     public Set<String> getCurrenciesTypes() throws CurrencyException {
         return getCurrencies().keySet();
     }
 
     public ExchangeModel convertCurrency(ExchangeModel model) throws CurrencyException {
+
+        long startTime = System.nanoTime();
+
         BigDecimal result = null;
 
         final String gelenParaBirimi = model.getFromCurrency();
         final String donusturulecekParaBirimi = model.getToCurrency();
 
-        final Double birimin_euro_karsiligi = 1/getCurrencies().get(model.getFromCurrency());
-        final Double donusturulennin_euro_karsiligi = 1/getCurrencies().get(model.getToCurrency());
+        final Double birimin_euro_karsiligi = 1 / getCurrencies().get(model.getFromCurrency());
+        final Double donusturulennin_euro_karsiligi = 1 / getCurrencies().get(model.getToCurrency());
 
         final BigDecimal receivedMoney = new BigDecimal(String.valueOf(model.getInputMoney()));
         final BigDecimal girilen_paranın_euro_karsiligi = receivedMoney.multiply(new BigDecimal(birimin_euro_karsiligi));
 
         if (model.getFromCurrency().equals(EUR)) {
-            result= receivedMoney.multiply(girilen_paranın_euro_karsiligi.setScale(5, RoundingMode.FLOOR));
-        }else {
+            result = receivedMoney.multiply(girilen_paranın_euro_karsiligi.setScale(5, RoundingMode.FLOOR));
+        } else {
             BigDecimal donusum = receivedMoney.multiply(new BigDecimal(birimin_euro_karsiligi));
             result = donusum.divide(new BigDecimal(donusturulennin_euro_karsiligi), 5, RoundingMode.FLOOR);
         }
 
         logService.saveLog(model, result);
+
+        log.info(" Calculation time " + (System.nanoTime() - startTime) / 1000000 + " ms");
 
         return model;
     }

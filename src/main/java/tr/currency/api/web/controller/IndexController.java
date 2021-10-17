@@ -1,8 +1,5 @@
 package tr.currency.api.web.controller;
 
-import tr.currency.api.web.entity.ExchangeModel;
-import tr.currency.api.web.exception.CurrencyException;
-import tr.currency.api.web.service.CurrencyConverterService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +7,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import tr.currency.api.web.entity.ExchangeModel;
+import tr.currency.api.web.exception.CurrencyException;
+import tr.currency.api.web.service.CurrencyConverterService;
+
+import java.time.LocalDateTime;
 
 /**
  * IndexController
@@ -28,7 +30,7 @@ public class IndexController {
      */
     @GetMapping({"/", "/index"})
     public String index(Model model) throws CurrencyException {
-
+        LocalDateTime reqTime = LocalDateTime.now();
         model.addAttribute("currenciestypes", currencyConverterService.getCurrenciesTypes());
         model.addAttribute("title", "Currency Conversion");
         model.addAttribute("welcome", "Currency Conversion");

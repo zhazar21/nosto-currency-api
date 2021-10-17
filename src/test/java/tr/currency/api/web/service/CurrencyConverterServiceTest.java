@@ -1,12 +1,12 @@
 package tr.currency.api.web.service;
 
-import tr.currency.api.web.entity.ExchangeModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import tr.currency.api.web.entity.ExchangeModel;
 import tr.currency.api.web.exception.CurrencyException;
 
 import java.math.BigDecimal;
@@ -34,7 +34,7 @@ class CurrencyConverterServiceTest {
 
     @Test
     @DisplayName("Test for get all currencies")
-    void getCurrenciesForCacheTest() throws CurrencyException {
+    void getCurrenciesTest() throws CurrencyException {
         Map<String, Double> result = currencyConverterService.getCurrencies();
         assertThat(result).isNotEmpty();
     }
