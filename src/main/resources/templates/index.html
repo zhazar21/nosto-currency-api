@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">${applicationTitle}</title>
+</head>
+<body>
+
+<div align="center" class="form-style-8">
+    <form action="#" th:action="@{convert}" th:object="${exchangeModel}" method="post">
+        <table>
+            <tr><h1 th:text="${welcome}"></h1></tr>
+            <tr>
+                <td><input type="text" th:field="*{inputMoney}"/></td>
+                <td><select th:field="*{fromCurrency}">
+<!--                    <option th:value="EUR" th:text="EUR">EUR</option>-->
+                    <option th:each="frm : ${currenciestypes}" th:value="${frm}" th:text="${frm}"></option>
+                </select></td>
+
+                <td>------></td>
+                <td><select th:field="*{toCurrency}">
+                    <option th:each="to : ${currenciestypes}" th:value="${to}" th:text="${to}"></option>
+                </select></td>
+
+                <td><input type="text" th:field="*{outputMoney}"/></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td><input type="submit" value="Convert" th:style="'color: blue;'"/></td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+
+</body>
+</html>

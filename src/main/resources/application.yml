@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: Nosto Currency Converter
+
+#currency:
+#  api:
+#    key:
+#    url:
+
+server:
+#  port: 8080
+  servlet:
+    context-path: /nosto
+
+currency:
+  url: "http://api.exchangeratesapi.io/v1/latest?access_key=c1b8abf515ae305e6d8815ad70a108ac&format=1"
