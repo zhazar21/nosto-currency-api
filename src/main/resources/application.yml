@@ -21,6 +21,8 @@ logging:
 server:
   servlet:
     context-path: /nosto
-
+  error:
+    whitelabel:
+      enabled: false
 currency:
   url: "http://api.exchangeratesapi.io/v1/latest?access_key=c1b8abf515ae305e6d8815ad70a108ac&format=1"
