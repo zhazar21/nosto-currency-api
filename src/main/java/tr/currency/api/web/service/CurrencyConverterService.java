@@ -24,7 +24,7 @@ public class CurrencyConverterService {
     public static final String EUR = "EUR";
 
     private final Environment env;
-
+    private final LogService logService;
 
     @Bean
     public RestTemplate restTemplate() {
@@ -72,7 +72,7 @@ public class CurrencyConverterService {
             result = donusum.divide(new BigDecimal(donusturulennin_euro_karsiligi), 5, RoundingMode.FLOOR);
         }
 
-        model.setOutputMoney(result);
+        logService.saveLog(model, result);
 
         return model;
     }
