@@ -1,17 +1,17 @@
 package tr.currency.api.rest;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import tr.currency.api.web.exception.CurrencyException;
-import tr.currency.api.web.service.CurrencyConverterService;
-import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import tr.currency.api.web.exception.CurrencyException;
+import tr.currency.api.web.service.CurrencyConverterService;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api")

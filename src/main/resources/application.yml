@@ -2,13 +2,18 @@ spring:
   application:
     name: Nosto Currency Converter
 
+logging:
+  level:
+    root: info
+  pattern:
+    console: '%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level)
+            %logger.%M - %msg%n'
 #currency:
 #  api:
 #    key:
 #    url:
 
 server:
-#  port: 8080
   servlet:
     context-path: /nosto
 
