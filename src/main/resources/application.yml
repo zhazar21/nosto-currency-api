@@ -1,7 +1,12 @@
 spring:
   application:
     name: Nosto Currency Converter
-
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    platform: postgres
+    url: jdbc:postgresql://ec2-54-91-188-254.compute-1.amazonaws.com:5432/d8q38b4o5dm4bo
+    username: ehiizbugvqicdm
+    password: c30bd2d206ddab40d821e9602661ab133dd1f684eda4b7190caf7037a639e136
 logging:
   level:
     root: info
