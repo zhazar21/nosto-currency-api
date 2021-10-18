@@ -13,7 +13,6 @@
             <tr>
                 <td><input type="text" th:field="*{inputMoney}"/></td>
                 <td><select th:field="*{fromCurrency}">
-<!--                    <option th:value="EUR" th:text="EUR">EUR</option>-->
                     <option th:each="frm : ${currenciestypes}" th:value="${frm}" th:text="${frm}"></option>
                 </select></td>
 
