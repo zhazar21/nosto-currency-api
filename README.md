@@ -9,6 +9,9 @@ rest api link: https://currency-demo-app.herokuapp.com/nosto/api/
 grafana:       https://mysterious-coast-62967.herokuapp.com/login
                   user: admin 
                   password: admin
+                  
+Note: the project needs LOMBOK configurations.
+pls check: https://projectlombok.org/features/configuration
          
          
 
