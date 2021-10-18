@@ -9,7 +9,7 @@
 <div align="center" class="form-style-8">
     <form action="#" th:action="@{convert}" th:object="${exchangeModel}" method="post">
         <table>
-            <tr><h1 th:text="${welcome}"></h1></tr>
+            <tr><h1 th:text="#{welcome}"></h1></tr>
             <tr>
                 <td><input type="text" th:field="*{inputMoney}"/></td>
                 <td><select th:field="*{fromCurrency}">
@@ -33,6 +33,10 @@
     </form>
 </div>
 
-
+<td>
+    <center>
+        <tr><h1 th:text="*{calculationtime}"></h1></tr>
+    </center>
+</td>
 </body>
 </html>

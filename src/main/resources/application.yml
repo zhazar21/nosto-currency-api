@@ -4,6 +4,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+  thymeleaf:
+    prefix: file:src/main/resources/templates/
   datasource:
     driver-class-name: org.postgresql.Driver
     platform: postgres

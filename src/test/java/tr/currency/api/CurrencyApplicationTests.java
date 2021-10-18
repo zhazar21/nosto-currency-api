@@ -1,12 +1,9 @@
 package tr.currency.api;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-
-@SpringBootTest
+//@SpringBootTest
 class CurrencyApplicationTests {
 
-    @Test
+    //    @Test
     void contextLoads() {
     }
 

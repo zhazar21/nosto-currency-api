@@ -13,6 +13,7 @@ import tr.currency.api.web.exception.CurrencyException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
@@ -54,30 +55,35 @@ public class CurrencyConverterService {
 
     public ExchangeModel convertCurrency(ExchangeModel model) throws CurrencyException {
 
-        long startTime = System.nanoTime();
+        try {
 
-        BigDecimal result = null;
+            long startTime = System.nanoTime();
+            model.setRequestTime(LocalDateTime.now());
+            BigDecimal result = null;
 
-        final String gelenParaBirimi = model.getFromCurrency();
-        final String donusturulecekParaBirimi = model.getToCurrency();
+            final String gelenParaBirimi = model.getFromCurrency();
+            final String donusturulecekParaBirimi = model.getToCurrency();
 
-        final Double birimin_euro_karsiligi = 1 / getCurrencies().get(model.getFromCurrency());
-        final Double donusturulennin_euro_karsiligi = 1 / getCurrencies().get(model.getToCurrency());
+            final Double birimin_euro_karsiligi = 1 / getCurrencies().get(model.getFromCurrency());
+            final Double donusturulennin_euro_karsiligi = 1 / getCurrencies().get(model.getToCurrency());
 
-        final BigDecimal receivedMoney = new BigDecimal(String.valueOf(model.getInputMoney()));
-        final BigDecimal girilen_paranın_euro_karsiligi = receivedMoney.multiply(new BigDecimal(birimin_euro_karsiligi));
+            final BigDecimal receivedMoney = new BigDecimal(String.valueOf(model.getInputMoney()));
+            final BigDecimal girilen_paranın_euro_karsiligi = receivedMoney.multiply(new BigDecimal(birimin_euro_karsiligi));
 
-        if (model.getFromCurrency().equals(EUR)) {
-            result = receivedMoney.multiply(girilen_paranın_euro_karsiligi.setScale(5, RoundingMode.FLOOR));
-        } else {
-            BigDecimal donusum = receivedMoney.multiply(new BigDecimal(birimin_euro_karsiligi));
-            result = donusum.divide(new BigDecimal(donusturulennin_euro_karsiligi), 5, RoundingMode.FLOOR);
+            if (model.getFromCurrency().equals(EUR)) {
+                result = receivedMoney.multiply(girilen_paranın_euro_karsiligi.setScale(5, RoundingMode.FLOOR));
+            } else {
+                BigDecimal donusum = receivedMoney.multiply(new BigDecimal(birimin_euro_karsiligi));
+                result = donusum.divide(new BigDecimal(donusturulennin_euro_karsiligi), 5, RoundingMode.FLOOR);
+            }
+
+            model.setResponseTime(LocalDateTime.now());
+            logService.saveLog(model, result);
+
+            log.info(" Calculation time " + (System.nanoTime() - startTime) / 1000000 + " ms");
+        } catch (Exception e) {
+            throw new CurrencyException("Error-001", "please check request params!");
         }
-
-        logService.saveLog(model, result);
-
-        log.info(" Calculation time " + (System.nanoTime() - startTime) / 1000000 + " ms");
-
         return model;
     }
 

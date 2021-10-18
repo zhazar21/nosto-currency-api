@@ -1,6 +1,8 @@
 package tr.currency.api.web.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,8 +13,6 @@ import tr.currency.api.web.entity.ExchangeModel;
 import tr.currency.api.web.exception.CurrencyException;
 import tr.currency.api.web.service.CurrencyConverterService;
 
-import java.time.LocalDateTime;
-
 /**
  * IndexController
  */
@@ -22,6 +22,7 @@ public class IndexController {
 
     private final CurrencyConverterService currencyConverterService;
 
+    private final MessageSource messageSource;
     /**
      * Index endpoint to show the index page
      *
@@ -30,13 +31,15 @@ public class IndexController {
      */
     @GetMapping({"/", "/index"})
     public String index(Model model) throws CurrencyException {
-        LocalDateTime reqTime = LocalDateTime.now();
+
+        final String message = messageSource.getMessage("convert.message", null, LocaleContextHolder.getLocale());
+
         model.addAttribute("currenciestypes", currencyConverterService.getCurrenciesTypes());
         model.addAttribute("title", "Currency Conversion");
-        model.addAttribute("welcome", "Currency Conversion");
+        model.addAttribute("welcome", message);
         model.addAttribute("applicationTitle", "Check24 Currency Converter");
         model.addAttribute("exchangeModel", ExchangeModel.builder().build());
-
+        model.addAttribute("calculationtime", null);
         return "index";
     }
 
@@ -48,14 +51,16 @@ public class IndexController {
      */
     @RequestMapping(value = "/convert", method = RequestMethod.POST)
     public String add(@ModelAttribute("exchangeModel") ExchangeModel exchangeModel, Model model) throws CurrencyException {
-
+        final String message = messageSource.getMessage("convert.message", null, LocaleContextHolder.getLocale());
+        long startTime = System.nanoTime();
         exchangeModel = currencyConverterService.convertCurrency(exchangeModel);
         model.addAttribute("currenciestypes", currencyConverterService.getCurrenciesTypes());
         model.addAttribute("title", "Currency Conversion");
-        model.addAttribute("welcome", "Currency Conversion");
+        model.addAttribute("welcome", message);
         model.addAttribute("applicationTitle", "Check24 Currency Converter");
         model.addAttribute("exchangeModel", exchangeModel);
-
+        String calculationTime = "Calculation time " + (System.nanoTime() - startTime) / 1000000 + " ms";
+        model.addAttribute("calculationtime", calculationTime);
         return "index";
     }
 

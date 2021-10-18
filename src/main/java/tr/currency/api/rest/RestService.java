@@ -1,12 +1,15 @@
 package tr.currency.api.rest;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import tr.currency.api.web.entity.ExchangeInputModel;
+import tr.currency.api.web.entity.ExchangeModel;
+import tr.currency.api.web.entity.ExchangeOutputModel;
+import tr.currency.api.web.entity.ModelMapper;
 import tr.currency.api.web.exception.CurrencyException;
 import tr.currency.api.web.service.CurrencyConverterService;
 
@@ -19,6 +22,7 @@ import java.util.Set;
 public class RestService {
 
     private final CurrencyConverterService currencyConverterService;
+    private final MessageSource messageSource;
 
     /**
      * List currencies rest endpoint
@@ -26,9 +30,24 @@ public class RestService {
      * @return Set of keys
      */
     @GetMapping("/currencyTypes")
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public Set<String> getCurrencyTypes() throws CurrencyException {
         return currencyConverterService.getCurrencies().keySet();
+    }
+
+
+    /**
+     * List currencies rest endpoint
+     *
+     * @return Set of keys
+     */
+    @PostMapping("/convertCurrencies")
+    public ResponseEntity<ExchangeOutputModel> convertCurrency(@RequestBody ExchangeInputModel exchangeInputModel) throws CurrencyException {
+        final ExchangeModel model = ModelMapper.INSTANCE.convert(exchangeInputModel);
+        final ExchangeModel response = currencyConverterService.convertCurrency(model);
+        final String message = messageSource.getMessage("convert.message", null, LocaleContextHolder.getLocale());
+        final ExchangeOutputModel exchangeOutputModel = ModelMapper.INSTANCE.convert(response);
+        exchangeOutputModel.setMessage(message);
+        return new ResponseEntity<>(exchangeOutputModel, HttpStatus.OK);
     }
 
     /**
@@ -37,7 +56,6 @@ public class RestService {
      * @return Set of key/values
      */
     @GetMapping("/currencies")
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public ResponseEntity<Map<String, Double>> getCurrencies() throws CurrencyException {
         return new ResponseEntity<>(currencyConverterService.getCurrencies(), HttpStatus.OK);
     }

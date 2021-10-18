@@ -1,14 +1,9 @@
 package tr.currency.api.web.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -16,16 +11,10 @@ import java.time.LocalDateTime;
 /**
  * ExchangeModel to use pojo model for currency calculation
  */
-@Entity
 @Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class ExchangeModel implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+@NoArgsConstructor
+public class ExchangeOutputModel implements Serializable {
 
     private String fromCurrency;
     private BigDecimal inputMoney;
@@ -35,8 +24,8 @@ public class ExchangeModel implements Serializable {
 
     private String exchangeRate;
 
-    private LocalDateTime requestTime;
+    private String message;
 
-    private LocalDateTime responseTime;
+    private LocalDateTime calculationTime;
 
 }

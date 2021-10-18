@@ -1,16 +1,12 @@
 package tr.currency.api.web.exception;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+public class CurrencyException extends Exception {
 
-import java.io.IOException;
+    private final String errorCode;
+    private final String detail;
 
-public class CurrencyException extends Throwable {
-
-    private String errorCode;
-    private IOException iOException;
-
-    public CurrencyException(String errorCode, JsonProcessingException e) {
+    public CurrencyException(String errorCode, String detail) {
         this.errorCode = errorCode;
-        this.iOException = e;
+        this.detail = detail;
     }
 }
