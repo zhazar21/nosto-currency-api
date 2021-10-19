@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import tr.currency.api.web.entity.ExchangeModel;
-import tr.currency.api.web.exception.CurrencyException;
 import tr.currency.api.web.service.CurrencyConverterService;
 
 /**
@@ -30,7 +29,7 @@ public class IndexController {
      * @return view name
      */
     @GetMapping({"/", "/index"})
-    public String index(Model model) throws CurrencyException {
+    public String index(Model model) {
 
         final String message = messageSource.getMessage("convert.message", null, LocaleContextHolder.getLocale());
 
@@ -50,7 +49,7 @@ public class IndexController {
      * @return view exchangeModel
      */
     @RequestMapping(value = "/convert", method = RequestMethod.POST)
-    public String add(@ModelAttribute("exchangeModel") ExchangeModel exchangeModel, Model model) throws CurrencyException {
+    public String add(@ModelAttribute("exchangeModel") ExchangeModel exchangeModel, Model model) {
         final String message = messageSource.getMessage("convert.message", null, LocaleContextHolder.getLocale());
         long startTime = System.nanoTime();
         exchangeModel = currencyConverterService.convertCurrency(exchangeModel);

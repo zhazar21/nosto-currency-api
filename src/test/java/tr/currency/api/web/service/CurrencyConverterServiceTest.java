@@ -7,7 +7,6 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import tr.currency.api.web.entity.ExchangeModel;
-import tr.currency.api.web.exception.CurrencyException;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -22,7 +21,7 @@ class CurrencyConverterServiceTest {
     private CurrencyConverterService currencyConverterService;
 
     @BeforeEach
-    void setUp() throws CurrencyException {
+    void setUp() {
 
         final Map<String, Double> model = new HashMap<>();
         model.put("EUR", (double) 15);
@@ -34,7 +33,7 @@ class CurrencyConverterServiceTest {
 
     @Test
     @DisplayName("Test for get all currencies")
-    void getCurrenciesTest() throws CurrencyException {
+    void getCurrenciesTest() {
         Map<String, Double> result = currencyConverterService.getCurrencies();
         assertThat(result).isNotEmpty();
     }
@@ -42,7 +41,7 @@ class CurrencyConverterServiceTest {
 
     @Test
     @DisplayName("Test for convert currency")
-    void convertCurrencyTest() throws CurrencyException {
+    void convertCurrencyTest() {
         final ExchangeModel exchangeModel = ExchangeModel.builder()
                 .inputMoney(BigDecimal.ONE)
                 .outputMoney(BigDecimal.TEN)
@@ -51,6 +50,7 @@ class CurrencyConverterServiceTest {
                 .exchangeRate("3").build();
 
         currencyConverterService.convertCurrency(exchangeModel);
-        assertThat(exchangeModel.getOutputMoney().equals(new BigDecimal(3)));
+        boolean result = exchangeModel.getOutputMoney().equals(new BigDecimal(3));
+        assertThat(result);
     }
 }

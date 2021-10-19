@@ -10,7 +10,6 @@ import tr.currency.api.web.entity.ExchangeInputModel;
 import tr.currency.api.web.entity.ExchangeModel;
 import tr.currency.api.web.entity.ExchangeOutputModel;
 import tr.currency.api.web.entity.ModelMapper;
-import tr.currency.api.web.exception.CurrencyException;
 import tr.currency.api.web.service.CurrencyConverterService;
 
 import java.util.Map;
@@ -30,7 +29,7 @@ public class RestService {
      * @return Set of keys
      */
     @GetMapping("/currencyTypes")
-    public Set<String> getCurrencyTypes() throws CurrencyException {
+    public Set<String> getCurrencyTypes() {
         return currencyConverterService.getCurrencies().keySet();
     }
 
@@ -41,7 +40,7 @@ public class RestService {
      * @return Set of keys
      */
     @PostMapping("/convertCurrencies")
-    public ResponseEntity<ExchangeOutputModel> convertCurrency(@RequestBody ExchangeInputModel exchangeInputModel) throws CurrencyException {
+    public ResponseEntity<ExchangeOutputModel> convertCurrency(@RequestBody ExchangeInputModel exchangeInputModel) {
         final ExchangeModel model = ModelMapper.INSTANCE.convert(exchangeInputModel);
         final ExchangeModel response = currencyConverterService.convertCurrency(model);
         final String message = messageSource.getMessage("convert.message", null, LocaleContextHolder.getLocale());
@@ -56,7 +55,7 @@ public class RestService {
      * @return Set of key/values
      */
     @GetMapping("/currencies")
-    public ResponseEntity<Map<String, Double>> getCurrencies() throws CurrencyException {
+    public ResponseEntity<Map<String, Double>> getCurrencies() {
         return new ResponseEntity<>(currencyConverterService.getCurrencies(), HttpStatus.OK);
     }
 

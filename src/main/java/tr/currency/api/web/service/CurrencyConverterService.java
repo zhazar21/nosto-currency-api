@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import tr.currency.api.web.entity.ExchangeModel;
 import tr.currency.api.web.entity.ExchangeRatesApiModel;
-import tr.currency.api.web.exception.CurrencyException;
+import tr.currency.api.web.exception.CurrencyNotfoundException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -33,8 +33,8 @@ public class CurrencyConverterService {
         return new RestTemplate();
     }
 
-    public Map<String, Double> getCurrencies() throws CurrencyException {
-        RestTemplate restTemplate =new RestTemplate();
+    public Map<String, Double> getCurrencies() {
+        RestTemplate restTemplate = new RestTemplate();
         final HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
@@ -42,18 +42,17 @@ public class CurrencyConverterService {
         ResponseEntity<ExchangeRatesApiModel> response = restTemplate.exchange(env.getProperty("currency.url"), HttpMethod.GET, entity, ExchangeRatesApiModel.class);
 
         ExchangeRatesApiModel exchangeRatesApiModel = null;
-        if (response.getStatusCode() == HttpStatus.OK) {
+        if (response.hasBody() && response.getStatusCode() == HttpStatus.OK) {
             exchangeRatesApiModel = response.getBody();
         }
-        // throw new CurrencyException("Error on getin exceptions",e);
         return exchangeRatesApiModel.getRates();
     }
 
-    public Set<String> getCurrenciesTypes() throws CurrencyException {
+    public Set<String> getCurrenciesTypes() {
         return getCurrencies().keySet();
     }
 
-    public ExchangeModel convertCurrency(ExchangeModel model) throws CurrencyException {
+    public ExchangeModel convertCurrency(ExchangeModel model) {
 
         try {
 
@@ -61,20 +60,17 @@ public class CurrencyConverterService {
             model.setRequestTime(LocalDateTime.now());
             BigDecimal result = null;
 
-            final String gelenParaBirimi = model.getFromCurrency();
-            final String donusturulecekParaBirimi = model.getToCurrency();
+            final Double euro_convertion = 1 / getCurrencies().get(model.getFromCurrency());
+            final Double convertedEuro = 1 / getCurrencies().get(model.getToCurrency());
 
-            final Double birimin_euro_karsiligi = 1 / getCurrencies().get(model.getFromCurrency());
-            final Double donusturulennin_euro_karsiligi = 1 / getCurrencies().get(model.getToCurrency());
-
-            final BigDecimal receivedMoney = new BigDecimal(String.valueOf(model.getInputMoney()));
-            final BigDecimal girilen_paranın_euro_karsiligi = receivedMoney.multiply(new BigDecimal(birimin_euro_karsiligi));
+            final BigDecimal receivedMoney = model.getInputMoney();
+            final BigDecimal inputMoneyToEuro = receivedMoney.multiply(new BigDecimal(euro_convertion));
 
             if (model.getFromCurrency().equals(EUR)) {
-                result = receivedMoney.multiply(girilen_paranın_euro_karsiligi.setScale(5, RoundingMode.FLOOR));
+                result = receivedMoney.multiply(inputMoneyToEuro.setScale(5, RoundingMode.FLOOR));
             } else {
-                BigDecimal donusum = receivedMoney.multiply(new BigDecimal(birimin_euro_karsiligi));
-                result = donusum.divide(new BigDecimal(donusturulennin_euro_karsiligi), 5, RoundingMode.FLOOR);
+                BigDecimal donusum = receivedMoney.multiply(BigDecimal.valueOf(euro_convertion));
+                result = donusum.divide(new BigDecimal(convertedEuro), 5, RoundingMode.FLOOR);
             }
 
             model.setResponseTime(LocalDateTime.now());
@@ -82,7 +78,7 @@ public class CurrencyConverterService {
 
             log.info(" Calculation time " + (System.nanoTime() - startTime) / 1000000 + " ms");
         } catch (Exception e) {
-            throw new CurrencyException("Error-001", "please check request params!");
+            throw new CurrencyNotfoundException("Currency is not supported!");
         }
         return model;
     }

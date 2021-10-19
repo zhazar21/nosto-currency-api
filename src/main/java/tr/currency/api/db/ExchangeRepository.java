@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import tr.currency.api.web.entity.ExchangeModel;
 
 @Repository
-public interface ExchngeRepository extends CrudRepository<ExchangeModel, Long> {
+public interface ExchangeRepository extends CrudRepository<ExchangeModel, Long> {
 
 }
