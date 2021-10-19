@@ -16,9 +16,8 @@ logging:
   level:
     root: info
   pattern:
-    console: '%d{dd-MM-yyyy HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level)
-            %logger.%M - %msg%n'
-
+    console: "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
+    file: "%d %p %c{1.} [%t] %m%n"
 
 server:
   servlet:
