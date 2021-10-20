@@ -21,6 +21,7 @@ import java.util.Set;
 public class RestService {
 
     private final CurrencyConverterService currencyConverterService;
+
     private final MessageSource messageSource;
 
     /**
