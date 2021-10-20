@@ -5,7 +5,7 @@ spring:
     name: Nosto Currency Converter
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
   thymeleaf:
     prefix: file:src/main/resources/templates/
   datasource:
