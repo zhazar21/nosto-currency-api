@@ -22,9 +22,8 @@ import java.util.Set;
 @AllArgsConstructor
 public class CurrencyConverterService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CurrencyConverterService.class);
-
     public static final String EUR = "EUR";
+    private static final Logger logger = LoggerFactory.getLogger(CurrencyConverterService.class);
     private final RestTemplate restTemplate;
     private final LogService logService;
 
@@ -59,22 +58,16 @@ public class CurrencyConverterService {
     public ExchangeModel calculateConvection(ExchangeModel model) {
 
         try {
-
             long startTime = System.nanoTime();
             model.setRequestTime(LocalDateTime.now());
+
             BigDecimal result = null;
-
-            final Double againtsEuro = 1 / getCurrencies().get(model.getFromCurrency());
-            final Double convertedEuro = 1 / getCurrencies().get(model.getToCurrency());
-
             final BigDecimal receivedMoney = model.getInputMoney();
-            final BigDecimal inputMoneyToEuro = receivedMoney.multiply(BigDecimal.valueOf(againtsEuro));
 
             if (model.getFromCurrency().equals(EUR)) {
-                result = receivedMoney.multiply(inputMoneyToEuro.setScale(5, RoundingMode.FLOOR));
+                result = calculateForEuro(model, receivedMoney);
             } else {
-                BigDecimal donusum = receivedMoney.multiply(BigDecimal.valueOf(againtsEuro));
-                result = donusum.divide(BigDecimal.valueOf(convertedEuro), 5, RoundingMode.FLOOR);
+                result = calculateForOthers(model, receivedMoney);
             }
 
             model.setResponseTime(LocalDateTime.now());
@@ -87,6 +80,20 @@ public class CurrencyConverterService {
             throw new CurrencyNotfoundException("Currency is not supported!");
         }
         return model;
+    }
+
+    private BigDecimal calculateForOthers(ExchangeModel model, BigDecimal receivedMoney) {
+
+        final Double againtsEuro = 1 / getCurrencies().get(model.getFromCurrency());
+        final Double convertedEuro = 1 / getCurrencies().get(model.getToCurrency());
+
+        final BigDecimal multiplyMoney = receivedMoney.multiply(BigDecimal.valueOf(againtsEuro));
+        return multiplyMoney.divide(BigDecimal.valueOf(convertedEuro), 5, RoundingMode.UP);
+    }
+
+    private BigDecimal calculateForEuro(ExchangeModel model, BigDecimal receivedMoney) {
+        final BigDecimal result = receivedMoney.multiply(BigDecimal.valueOf(getCurrencies().get(model.getToCurrency())));
+        return result.setScale(5, RoundingMode.UP);
     }
 
 
