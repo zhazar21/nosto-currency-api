@@ -1,8 +1,9 @@
 package tr.currency.api.web.service;
 
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -18,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Component
+@AllArgsConstructor
 public class CurrencyConverterService {
 
     private static final Logger logger = LoggerFactory.getLogger(CurrencyConverterService.class);
@@ -25,25 +27,16 @@ public class CurrencyConverterService {
     public static final String EUR = "EUR";
     private final RestTemplate restTemplate;
     private final LogService logService;
-    private final String url;
 
-    public CurrencyConverterService(LogService logService, RestTemplate restTemplate) {
-        this.logService = logService;
-        this.url = getUrl();
-        this.restTemplate = restTemplate;
-    }
-
-    @Value("${currency.url}")
-    public String getUrl() {
-        return url;
-    }
+    private final Environment env;
 
     public Map<String, Double> getCurrencies() {
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         final HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<ExchangeRatesApiModel> response = restTemplate.exchange(getUrl(), HttpMethod.GET, entity, ExchangeRatesApiModel.class);
+        String url = env.getProperty("currency.url");
+        ResponseEntity<ExchangeRatesApiModel> response = restTemplate.exchange(url, HttpMethod.GET, entity, ExchangeRatesApiModel.class);
 
         if (!response.hasBody()) {
             throw new CurrencyNotfoundException("Connection problem!");
