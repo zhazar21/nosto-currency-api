@@ -3,7 +3,6 @@ package tr.currency.api.rest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -28,7 +27,7 @@ class RestServiceTest {
     @MockBean
     private CurrencyConverterService currencyConverterService;
 
-    @Mock
+    @MockBean
     private RestService restService;
 
     @BeforeEach
@@ -46,16 +45,15 @@ class RestServiceTest {
         Mockito.when(restService.getCurrencies())
                 .thenReturn(new ResponseEntity<>(model, HttpStatus.OK));
 
-//        Mockito.when(restService.getCurrencyTypes())
-//                .thenReturn(model.keySet());
-
+        Mockito.when(restService.getCurrencyTypes())
+                .thenReturn(model.keySet());
     }
 
     @Test
     @DisplayName("Test for all currency types")
     void getCurrenciesTypes() {
         Set<String> result = restService.getCurrencyTypes();
-        assertThat(result);
+        assertThat(result).isNotEmpty();
     }
 
     @Test

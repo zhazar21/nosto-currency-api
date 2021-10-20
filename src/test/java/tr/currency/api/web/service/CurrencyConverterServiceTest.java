@@ -42,15 +42,14 @@ class CurrencyConverterServiceTest {
     @Test
     @DisplayName("Test for convert currency")
     void convertCurrencyTest() {
-        final ExchangeModel exchangeModel = ExchangeModel.builder()
+        ExchangeModel exchangeModel = ExchangeModel.builder()
                 .inputMoney(BigDecimal.ONE)
                 .outputMoney(BigDecimal.TEN)
                 .fromCurrency("EUR")
                 .toCurrency("USD")
                 .exchangeRate("3").build();
 
-        currencyConverterService.convertCurrency(exchangeModel);
-        boolean result = exchangeModel.getOutputMoney().equals(new BigDecimal(3));
-        assertThat(result);
+        ExchangeModel model = currencyConverterService.calculateConvection(exchangeModel);
+        assertThat(model).isNull();
     }
 }

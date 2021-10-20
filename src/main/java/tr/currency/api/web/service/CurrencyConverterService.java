@@ -1,6 +1,5 @@
 package tr.currency.api.web.service;
 
-import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,26 +18,32 @@ import java.util.Map;
 import java.util.Set;
 
 @Component
-@AllArgsConstructor
 public class CurrencyConverterService {
-
-    public static final String EUR = "EUR";
-
-    private final LogService logService;
 
     private static final Logger logger = LoggerFactory.getLogger(CurrencyConverterService.class);
 
-    @Value("${currency.url}")
+    public static final String EUR = "EUR";
+    private final RestTemplate restTemplate;
+    private final LogService logService;
     private final String url;
 
-    private final RestTemplate restTemplate;
+    public CurrencyConverterService(LogService logService, RestTemplate restTemplate) {
+        this.logService = logService;
+        this.url = getUrl();
+        this.restTemplate = restTemplate;
+    }
+
+    @Value("${currency.url}")
+    public String getUrl() {
+        return url;
+    }
 
     public Map<String, Double> getCurrencies() {
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         final HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<ExchangeRatesApiModel> response = restTemplate.exchange(url, HttpMethod.GET, entity, ExchangeRatesApiModel.class);
+        ResponseEntity<ExchangeRatesApiModel> response = restTemplate.exchange(getUrl(), HttpMethod.GET, entity, ExchangeRatesApiModel.class);
 
         if (!response.hasBody()) {
             throw new CurrencyNotfoundException("Connection problem!");
@@ -46,7 +51,7 @@ public class CurrencyConverterService {
 
         ExchangeRatesApiModel exchangeRatesApiModel = null;
 
-        if (response == null || response.getStatusCode() == HttpStatus.OK) {
+        if (response.getStatusCode() == HttpStatus.OK) {
             exchangeRatesApiModel = response.getBody();
             return exchangeRatesApiModel.getRates();
         }
@@ -58,7 +63,7 @@ public class CurrencyConverterService {
         return getCurrencies().keySet();
     }
 
-    public ExchangeModel convertCurrency(ExchangeModel model) {
+    public ExchangeModel calculateConvection(ExchangeModel model) {
 
         try {
 
@@ -80,7 +85,7 @@ public class CurrencyConverterService {
             }
 
             model.setResponseTime(LocalDateTime.now());
-
+            model.setOutputMoney(result);
             logService.saveLog(model, result);
 
             logger.info(String.format(" Calculation time %s ms", (System.nanoTime() - startTime) / 1000000));

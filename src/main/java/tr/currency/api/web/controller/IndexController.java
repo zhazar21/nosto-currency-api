@@ -7,8 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import tr.currency.api.web.entity.ExchangeModel;
 import tr.currency.api.web.service.CurrencyConverterService;
 
@@ -48,11 +47,11 @@ public class IndexController {
      * @param model Spring's view model
      * @return view exchangeModel
      */
-    @RequestMapping(value = "/convert", method = RequestMethod.POST)
+    @PostMapping(value = "/convert")
     public String add(@ModelAttribute("exchangeModel") ExchangeModel exchangeModel, Model model) {
         final String message = messageSource.getMessage("convert.message", null, LocaleContextHolder.getLocale());
         long startTime = System.nanoTime();
-        exchangeModel = currencyConverterService.convertCurrency(exchangeModel);
+        exchangeModel = currencyConverterService.calculateConvection(exchangeModel);
         model.addAttribute("currenciestypes", currencyConverterService.getCurrenciesTypes());
         model.addAttribute("title", "Currency Conversion");
         model.addAttribute("welcome", message);

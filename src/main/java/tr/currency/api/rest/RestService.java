@@ -43,7 +43,7 @@ public class RestService {
     @PostMapping("/convertCurrencies")
     public ResponseEntity<ExchangeOutputModel> convertCurrency(@RequestBody ExchangeInputModel exchangeInputModel) {
         final ExchangeModel model = ModelMapper.INSTANCE.convert(exchangeInputModel);
-        final ExchangeModel response = currencyConverterService.convertCurrency(model);
+        final ExchangeModel response = currencyConverterService.calculateConvection(model);
         final String message = messageSource.getMessage("convert.message", null, LocaleContextHolder.getLocale());
         final ExchangeOutputModel exchangeOutputModel = ModelMapper.INSTANCE.convert(response);
         exchangeOutputModel.setMessage(message);
