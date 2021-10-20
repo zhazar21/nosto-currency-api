@@ -16,7 +16,7 @@ spring:
     password: c30bd2d206ddab40d821e9602661ab133dd1f684eda4b7190caf7037a639e136
 logging:
   level:
-    root: info
+    root: debug
   pattern:
     console: "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
     file: "%d %p %c{1.} [%t] %m%n"
